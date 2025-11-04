@@ -144,7 +144,7 @@ class RoomSeeder extends Seeder
             ],
         ];
 
-        for ($i=1; $i <=count($rooms); $i++) { 
+        for ($i = 1; $i <= count($rooms); $i++) {
             Room::create([
                 'code' => $rooms[$i - 1][5],
                 'name' => $rooms[$i - 1][0],

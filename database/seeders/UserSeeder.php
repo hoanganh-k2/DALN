@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
+use Faker\Factory as Faker;
 
 class UserSeeder extends Seeder
 {
@@ -17,7 +18,7 @@ class UserSeeder extends Seeder
     public function run()
     {
         $user = User::create([
-            'name' => 'User Abi Noval Fauzi',
+            'name' => 'User',
             'code' => bin2hex(random_bytes(20)),
             'email' => 'user@gmail.com',
             'email_verified_at' => now(),
@@ -29,7 +30,7 @@ class UserSeeder extends Seeder
 
         $user->syncRoles('user');
 
-        $faker = \Faker\Factory::create();
+        $faker = Faker::create('vi_VN');
 
         for ($i = 1; $i < 200; $i++) {
             $user = User::create([
@@ -40,7 +41,7 @@ class UserSeeder extends Seeder
                 'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
                 'phone_number' => $faker->phoneNumber(), // password
                 'remember_token' => Str::random(10),
-                'avatar' => 'img/avatar/' . substr($faker->name(), 0, 1)  . '.png'
+                'avatar' => 'img/avatar/' . Str::ascii(substr($faker->name(), 0, 1)) . '.png',
             ]);
 
             $user->syncRoles('user');

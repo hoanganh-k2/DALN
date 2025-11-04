@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
+use Faker\Factory as Faker;
 
 class ReceptionistSeeder extends Seeder
 {
@@ -17,7 +18,7 @@ class ReceptionistSeeder extends Seeder
     public function run()
     {
         $receptionist = User::create([
-            'name' => 'Receptionist Abi Noval Fauzi',
+            'name' => 'Receptionist',
             'code' => bin2hex(random_bytes(20)),
             'email' => 'receptionist@gmail.com',
             'email_verified_at' => now(),
@@ -29,7 +30,7 @@ class ReceptionistSeeder extends Seeder
 
         $receptionist->syncRoles('receptionist');
 
-        $faker = \Faker\Factory::create();
+        $faker = Faker::create('vi_VN');
 
         for ($i = 1; $i < 50; $i++) {
             $receptionist = User::create([
@@ -40,7 +41,7 @@ class ReceptionistSeeder extends Seeder
                 'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
                 'phone_number' => $faker->phoneNumber(), // password
                 'remember_token' => Str::random(10),
-                'avatar' => 'img/avatar/' . substr($faker->name(), 0, 1)  . '.png'
+                'avatar' => 'img/avatar/' . Str::ascii(substr($faker->name(), 0, 1))  . '.png'
             ]);
 
             $receptionist->syncRoles('receptionist');
