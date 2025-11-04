@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Facility;
+use App\Models\Room;
 use App\Models\RoomHasFacility;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,100 +17,65 @@ class RoomHasFacilitySeeder extends Seeder
      */
     public function run()
     {
-        // Junior Suite
-        RoomHasFacility::create([
-            'room_id' => 3,
-            'facility_code' => '2b7563186c78f9a2a555c82b500f62dc9a616ee4'
-        ]);
+        // Lấy facilities từ database
+        $facilities = Facility::pluck('code', 'type')->toArray();
+        $rooms = Room::all();
 
-        // Suite
-        RoomHasFacility::create([
-            'room_id' => 4,
-            'facility_code' => '2b7563186c78f9a2a555c82b500f62dc9a616ee4'
-        ]);
-
-        RoomHasFacility::create([
-            'room_id' => 4,
-            'facility_code' => 'd5f74d17b239ebd6a7f9accf369b0c017aae2811'
-        ]);
-
-        RoomHasFacility::create([
-            'room_id' => 4,
-            'facility_code' => '7f99d296472f767a6e65bf088af047d37c0f5e52'
-        ]);
-
-        // Presidential Suite
-        RoomHasFacility::create([
-            'room_id' => 5,
-            'facility_code' => '2b7563186c78f9a2a555c82b500f62dc9a616ee4'
-        ]);
-
-        RoomHasFacility::create([
-            'room_id' => 5,
-            'facility_code' => 'd5f74d17b239ebd6a7f9accf369b0c017aae2811'
-        ]);
-
-        RoomHasFacility::create([
-            'room_id' => 5,
-            'facility_code' => '7f99d296472f767a6e65bf088af047d37c0f5e52'
-        ]);
-
-        // Single
-        RoomHasFacility::create([
-            'room_id' => 6,
-            'facility_code' => '2b7563186c78f9a2a555c82b500f62dc9a616ee4'
-        ]);
-
-        // Twin
-        RoomHasFacility::create([
-            'room_id' => 7,
-            'facility_code' => '2b7563186c78f9a2a555c82b500f62dc9a616ee4'
-        ]);
-
-        // Double
-        RoomHasFacility::create([
-            'room_id' => 8,
-            'facility_code' => '2b7563186c78f9a2a555c82b500f62dc9a616ee4'
-        ]);
-
-        // Family
-        RoomHasFacility::create([
-            'room_id' => 9,
-            'facility_code' => '2b7563186c78f9a2a555c82b500f62dc9a616ee4'
-        ]);
-
-        // Connecting
-        RoomHasFacility::create([
-            'room_id' => 10,
-            'facility_code' => '2b7563186c78f9a2a555c82b500f62dc9a616ee4'
-        ]);
-
-        // Murphy
-        RoomHasFacility::create([
-            'room_id' => 11,
-            'facility_code' => '2b7563186c78f9a2a555c82b500f62dc9a616ee4'
-        ]);
-
-        // Accessible
-        RoomHasFacility::create([
-            'room_id' => 12,
-            'facility_code' => '2b7563186c78f9a2a555c82b500f62dc9a616ee4'
-        ]);
-
-        RoomHasFacility::create([
-            'room_id' => 12,
-            'facility_code' => '7f99d296472f767a6e65bf088af047d37c0f5e52'
-        ]);
-
-        // Cabana
-        RoomHasFacility::create([
-            'room_id' => 12,
-            'facility_code' => '2b7563186c78f9a2a555c82b500f62dc9a616ee4'
-        ]);
-
-        RoomHasFacility::create([
-            'room_id' => 12,
-            'facility_code' => '67b971a1466e3ffbf01a26fcf842bacc85feb7a2'
-        ]);
+        foreach ($rooms as $room) {
+            // Gán tiện nghi dựa trên loại phòng
+            if (str_contains($room->name, 'Presidential Suite')) {
+                // Presidential Suite có đầy đủ tiện nghi
+                foreach ($facilities as $type => $code) {
+                    RoomHasFacility::create([
+                        'room_id' => $room->id,
+                        'facility_code' => $code
+                    ]);
+                }
+            } elseif (str_contains($room->name, 'Junior Suite')) {
+                // Junior Suite có một số tiện nghi cao cấp
+                $selectedTypes = ['wifi', 'ac', 'tv', 'pool', 'parking'];
+                foreach ($selectedTypes as $type) {
+                    if (isset($facilities[$type])) {
+                        RoomHasFacility::create([
+                            'room_id' => $room->id,
+                            'facility_code' => $facilities[$type]
+                        ]);
+                    }
+                }
+            } elseif (str_contains($room->name, 'Deluxe')) {
+                // Deluxe có tiện nghi trung cấp
+                $selectedTypes = ['wifi', 'ac', 'tv', 'parking'];
+                foreach ($selectedTypes as $type) {
+                    if (isset($facilities[$type])) {
+                        RoomHasFacility::create([
+                            'room_id' => $room->id,
+                            'facility_code' => $facilities[$type]
+                        ]);
+                    }
+                }
+            } elseif (str_contains($room->name, 'Superior')) {
+                // Superior có tiện nghi cơ bản +
+                $selectedTypes = ['wifi', 'ac', 'tv'];
+                foreach ($selectedTypes as $type) {
+                    if (isset($facilities[$type])) {
+                        RoomHasFacility::create([
+                            'room_id' => $room->id,
+                            'facility_code' => $facilities[$type]
+                        ]);
+                    }
+                }
+            } else {
+                // Standard có tiện nghi cơ bản
+                $selectedTypes = ['wifi', 'ac'];
+                foreach ($selectedTypes as $type) {
+                    if (isset($facilities[$type])) {
+                        RoomHasFacility::create([
+                            'room_id' => $room->id,
+                            'facility_code' => $facilities[$type]
+                        ]);
+                    }
+                }
+            }
+        }
     }
 }

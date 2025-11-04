@@ -84,6 +84,12 @@ Route::namespace('App\Http\Livewire')->group(function () {
                     Route::get('/', Index::class)->name('index');
                     Route::get('/proof/{reservation:code}', [ReservationProof::class, 'render'])->name('proof');
                 });
+
+                //? To view room floor plan
+                Route::prefix('/rooms')->namespace('Room')->name('rooms.')->group(function () {
+                    Route::get('/', Index::class)->name('index');
+                    Route::get('/{room:code}', Show::class)->name('show');
+                });
             });
         });
     });

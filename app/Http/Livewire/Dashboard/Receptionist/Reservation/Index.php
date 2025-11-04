@@ -21,7 +21,7 @@ class Index extends Component
         'status' => ['except' => ''],
     ];
 
-    protected $listeners = ['status:confirmed' => 'statusConfirmed', 'status:checkin' => 'statusCheckIn', 'status:checkout' => 'statusCheckOut'];
+    protected $listeners = ['status:confirmed' => 'statusConfirmed', 'status:checkin' => 'statusCheckIn', 'status:checkout' => 'statusCheckOut', 'status:canceled' => 'statusCanceled'];
 
     public function render()
     {
@@ -34,24 +34,59 @@ class Index extends Component
     {
         $reservation = Reservation::firstWhere('code', $code);
         $reservation->update(['status' => 'confirmed']);
+        
+        // Cập nhật trạng thái phòng
+        $room = Room::find($reservation->room_id);
+        if ($room) {
+            // Giảm số phòng available
+            $room->available = max(0, $room->available - $reservation->total_rooms);
+            $room->save();
+        }
+        
         $this->emitSelf('status:confirmed');
+        session()->flash('message', 'Đã xác nhận đặt phòng thành công!');
     }
 
     public function checkIn($code)
     {
         $reservation = Reservation::firstWhere('code', $code);
         $reservation->update(['status' => 'check in']);
+        
+        // Cập nhật trạng thái phòng - phòng đang được sử dụng
+        $room = Room::find($reservation->room_id);
+        if ($room) {
+            // Đánh dấu phòng cần dọn sau khi check-in (đang sử dụng)
+            $room->cleaning_status = 'clean'; // Phòng sạch khi khách vào
+            $room->save();
+        }
+        
         $this->emitSelf('status:checkin');
+        session()->flash('message', 'Check-in thành công! Phòng đã sẵn sàng cho khách.');
     }
 
     public function checkOut($code)
     {
         $reservation = Reservation::firstWhere('code', $code);
-        $room = Room::firstWhere('code', $reservation->room->code);
+        $room = Room::find($reservation->room_id);
+        
         $reservation->update(['status' => 'check out']);
-        $room->available = $room->total_rooms - array_sum($room->reservations->where('status', '<>', 'canceled')->where('status', '<>', 'check out')->pluck('total_rooms')->toArray());
-        $room->save();
+        
+        if ($room) {
+            // Tính lại số phòng available
+            $room->available = $room->total_rooms - array_sum(
+                $room->reservations
+                    ->whereIn('status', ['waiting', 'confirmed', 'check in'])
+                    ->pluck('total_rooms')
+                    ->toArray()
+            );
+            
+            // Đánh dấu phòng cần dọn sau khi check-out
+            $room->cleaning_status = 'dirty';
+            $room->save();
+        }
+        
         $this->emitSelf('status:checkout');
+        session()->flash('message', 'Check-out thành công! Phòng cần dọn dẹp.');
     }
 
     public function statusConfirmed()
@@ -67,5 +102,32 @@ class Index extends Component
     public function statusCheckOut()
     {
         $this->dispatchBrowserEvent('status:checkout');
+    }
+
+    public function statusCanceled()
+    {
+        $this->dispatchBrowserEvent('status:canceled');
+    }
+
+    public function cancel($code)
+    {
+        $reservation = Reservation::firstWhere('code', $code);
+        $room = Room::find($reservation->room_id);
+        
+        $reservation->update(['status' => 'canceled']);
+        
+        if ($room) {
+            // Hoàn lại số phòng available
+            $room->available = $room->total_rooms - array_sum(
+                $room->reservations
+                    ->whereIn('status', ['waiting', 'confirmed', 'check in'])
+                    ->pluck('total_rooms')
+                    ->toArray()
+            );
+            $room->save();
+        }
+        
+        $this->emitSelf('status:canceled');
+        session()->flash('message', 'Đã hủy đặt phòng.');
     }
 }
