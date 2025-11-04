@@ -46,9 +46,7 @@ Quy tắc phản hồi:
    - 'Giới thiệu dịch vụ' → nhà hàng, hồ bơi, spa, gym, giặt ủi, đưa đón....
 3. Nếu câu hỏi vượt khả năng → đề xuất liên hệ lễ tân qua số điện thoại 012-345-6789.
 4. Luôn sử dụng tiếng Việt.
-5. Chỉ trả lời các câu hỏi liên quan khách sạn và du lịch.
-6. Khi bắt đầu Giới thiệu lần đầu khi bắt đầu cuộc trò chuyện 'Xin chào! Tôi là Phenikaa Hotel AI trợ lý ảo của khách sạn Phenikaa.
-Tôi có thể giúp bạn đặt phòng, xem giá và tìm hiểu dịch vụ.'.";
+5. Chỉ trả lời các câu hỏi liên quan khách sạn và du lịch.";
         try {
             // 🚀 Gửi request đến Gemini API
             $response = Http::withoutVerifying()->timeout(50)
