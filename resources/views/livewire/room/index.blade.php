@@ -40,7 +40,11 @@
                             {{ $room->description }}
                         </p>
                     </div>
-                    <span class="text-sm text-gray-600 bg-gray-200 py-2 text-center rounded-tr-xl rounded-bl-xl block">{{ (int) $room->total_rooms -  (int) $room->reservations->count()}} rooms available</span>
+                    @php
+                        // Tính tổng số phòng available của loại phòng này
+                        $totalAvailable = \App\Models\Room::where('name', $room->name)->sum('available');
+                    @endphp
+                    <span class="text-sm text-gray-600 bg-gray-200 py-2 text-center rounded-tr-xl rounded-bl-xl block">{{ $totalAvailable }} rooms available</span>
                 </div>
             @empty
                 <p class="tracking-wide text-gray-600 sm:text-base text-sm">There is nothing here</p>

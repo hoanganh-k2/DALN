@@ -18,7 +18,8 @@ class FacilityReviewSeeder extends Seeder
     public function run()
     {
         $users = User::role('user')->skip(30)->take(20)->get()->pluck('id');
-        $facilityCodes = [ '67b971a1466e3ffbf01a26fcf842bacc85feb7a2', '06ab599a280090150bbbdba527ece643855842c3', 'f0903398b6625e0d2c58a6ae6a2d626ca21c8fb1', 'd5f74d17b239ebd6a7f9accf369b0c017aae2811', '8350bb155dcf4cd92716cc2c3f93e1010c49e39e', '2b7563186c78f9a2a555c82b500f62dc9a616ee4', '7f99d296472f767a6e65bf088af047d37c0f5e52'];
+        // Lấy facility codes từ database thay vì hardcode
+        $facilityCodes = Facility::pluck('code')->toArray();
         $faker = \Faker\Factory::create();
 
         for ($i = 0; $i < count($users); $i++) {
