@@ -3,7 +3,7 @@
 use App\Http\Livewire\Dashboard\Receptionist\Reservation\Proof as ReservationProof;
 use App\Http\Livewire\Dashboard\User\Reservation\Proof;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\ChatbotController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,6 +14,12 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/chatbot', function () {
+    return view('chatbot');
+})->name('chatbot.view');
+
+Route::post('/chatbot/send', [ChatbotController::class, 'sendMessage'])->name('chatbot.send');
 
 Route::namespace('App\Http\Livewire')->group(function () {
     //? Routes that can be accessed only when logging in
@@ -58,15 +64,15 @@ Route::namespace('App\Http\Livewire')->group(function () {
                     Route::get('/proof/{reservation:code}', [Proof::class, 'render'])->name('proof');
                 });
 
-                    Route::prefix('/reviews')->namespace('Review')->name('reviews.')->group(function () {
-                        Route::namespace('Room')->group(function () {
-                            Route::get('/rooms', Index::class)->name('rooms.index');
-                        });
-
-                        Route::namespace('Facility')->group(function () {
-                            Route::get('/facilities', Index::class)->name('facilities.index');
-                        });
+                Route::prefix('/reviews')->namespace('Review')->name('reviews.')->group(function () {
+                    Route::namespace('Room')->group(function () {
+                        Route::get('/rooms', Index::class)->name('rooms.index');
                     });
+
+                    Route::namespace('Facility')->group(function () {
+                        Route::get('/facilities', Index::class)->name('facilities.index');
+                    });
+                });
             });
 
             //? Route for receptionist dashboard page

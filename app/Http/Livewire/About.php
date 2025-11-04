@@ -11,6 +11,6 @@ class About extends Component
     {
         return view('livewire.about', [
             'about' => ModelsAbout::first()
-        ])->layout('layouts.main', ['title' => 'About Hollux | Hollux']);
+        ])->layout('layouts.main', ['title' => 'Hotel | Hotel']);
     }
 }
