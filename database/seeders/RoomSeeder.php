@@ -20,7 +20,7 @@ class RoomSeeder extends Seeder
                 'description' => 'The bedroom with the cheapest price but still quality',
                 'explanation' => 'Dictumst aliquam consectetuer gravida erat platea quis. Senectus ex nisi pulvinar lacus consequat elementum ipsum per.',
                 'price' => 20, // $20/night (converted from 500k VND)
-                'total_rooms' => 4, // Mỗi phòng chỉ 1 giường
+                'total_rooms' => 20, // Mỗi phòng chỉ 1 giường
                 'floors' => [1, 2, 3, 4, 5],
                 'prefix' => 'ST'
             ],
@@ -28,7 +28,7 @@ class RoomSeeder extends Seeder
                 'description' => 'Bedrooms with better interiors and views',
                 'explanation' => 'Pharetra eu curae natoque ipsum laoreet conubia ullamcorper senectus. Maecenas volutpat fermentum turpis.',
                 'price' => 32, // $32/night (converted from 800k VND)
-                'total_rooms' => 4,
+                'total_rooms' => 12,
                 'floors' => [6, 7, 8],
                 'prefix' => 'SUP'
             ],
@@ -36,7 +36,7 @@ class RoomSeeder extends Seeder
                 'description' => 'A large bedroom with a luxurious and elegant interior',
                 'explanation' => 'Lorem mattis cras primis nisi interdum sagittis sapien felis. Class eleifend non euismod ut aenean volutpat mus congue.',
                 'price' => 48, // $48/night (converted from 1.2tr VND)
-                'total_rooms' => 4,
+                'total_rooms' => 16,
                 'floors' => [9, 10, 11, 12],
                 'prefix' => 'DLX'
             ],
@@ -44,7 +44,7 @@ class RoomSeeder extends Seeder
                 'description' => 'The bedroom is accompanied by a large wardrobe and a living room',
                 'explanation' => 'Pretium curabitur hac nibh tellus montes maecenas augue laoreet lectus quam posuere.',
                 'price' => 72, // $72/night (converted from 1.8tr VND)
-                'total_rooms' => 4,
+                'total_rooms' => 12,
                 'floors' => [13, 14, 15],
                 'prefix' => 'JS'
             ],
