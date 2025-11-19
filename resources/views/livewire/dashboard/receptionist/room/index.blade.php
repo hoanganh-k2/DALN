@@ -248,8 +248,7 @@
                 </div>
                 <div class="text-center">
                     <div class="text-3xl font-bold text-blue-600">
-                        
-                          {{ $rooms->flatMap->reservations->where('pivot.status', 'confirmed')->count() }}
+                        {{ $this->getReservationTotalByStatus($rooms) }}
                     </div>
                     <div class="text-sm text-gray-600 mt-1">Chờ check-in</div>
                 </div>

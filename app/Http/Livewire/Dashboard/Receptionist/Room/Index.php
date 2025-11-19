@@ -4,7 +4,7 @@ namespace App\Http\Livewire\Dashboard\Receptionist\Room;
 
 use App\Models\RoomDetail;
 use Livewire\Component;
-
+use App\Models\Reservation;
 class Index extends Component
 {
     public $floors;
@@ -98,12 +98,16 @@ class Index extends Component
             return 'occupied';
         }
 
-        // Đã đặt trước nhưng chưa check-in
-        if ($activeReservations->contains(function($res) { return $res->pivot->status === 'confirmed'; })) {
-            return 'reserved';
-        }
     }
     return 'available'; // Không có reservation nào đang active
+}
+    public function getReservationTotalByStatus($rooms)
+{
+    $room = $rooms->first(); // lấy room đầu tiên, hoặc bạn có thể truyền room trực tiếp
+    // Trả về tổng giá trị cột total_rooms
+    return Reservation::where('room_id', $room->room_id)
+        ->where('status', 'confirmed')
+        ->sum('total_rooms');
 }
 
 

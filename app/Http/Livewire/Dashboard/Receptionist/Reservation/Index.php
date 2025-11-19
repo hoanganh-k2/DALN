@@ -43,31 +43,6 @@ class Index extends Component
             return;
         }
 
-        // Số phòng cần gán
-        $numRooms = (int) $reservation->total_rooms;
-
-        // Tìm phòng RoomDetail còn trống thuộc loại phòng đó
-        $availableRooms = RoomDetail::where('room_id', $reservation->room_id)
-            ->where('is_available', 'true')
-            ->take($numRooms)
-            ->get();
-
-        if ($availableRooms->count() < $numRooms) {
-            session()->flash('error', 'Không đủ phòng trống để đặt.');
-            return;
-        }
-
-        // Gán phòng vào reservation
-        foreach ($availableRooms as $room) {
-            $reservation->roomDetails()->attach($room->id, [
-                'status' => 'confirmed',
-                'price' => $reservation->total_price / $numRooms, // nếu muốn chia theo giá
-            ]);
-
-            // Đánh dấu phòng đã sử dụng
-            $room->update(['is_available' => 'false']);
-        }
-
         // Cập nhật trạng thái reservation
         $reservation->update(['status' => 'confirmed']);
         $this->emitSelf('status:confirmed');
@@ -82,21 +57,30 @@ class Index extends Component
         session()->flash('error', 'Reservation không tồn tại.');
         return;
     }
-
-    // Lấy tất cả RoomDetail đã confirm
-    $confirmedRooms = $reservation->roomDetails->filter(function($room) {
-        return $room->pivot->status === 'confirmed';
-    });
-
-    if ($confirmedRooms->isEmpty()) {
-        session()->flash('error', 'Reservation chưa được xác nhận phòng.');
+    // Số phòng cần gán
+    $numRooms = (int) $reservation->total_rooms;
+    // Tìm phòng RoomDetail còn trống thuộc loại phòng đó
+    $availableRooms = RoomDetail::where('room_id', $reservation->room_id)
+        ->where('is_available', 'true')
+        ->take($numRooms)
+        ->get();
+    if ($availableRooms->count() < $numRooms) {
+        session()->flash('error', 'Không đủ phòng trống để check-in.');
         return;
     }
-
-    // Đánh dấu tất cả phòng đã confirm thành check-in
-    foreach ($confirmedRooms as $room) {
-        $room->pivot->update(['status' => 'check in']);
+    // Gán phòng vào reservation
+    $confirmedRooms = collect();
+    foreach ($availableRooms as $room) {
+        $reservation->roomDetails()->attach($room->id, [
+            'status' => 'check in',
+            'price' => $reservation->total_price / $numRooms, // nếu muốn chia theo giá
+        ]);
+        // Đánh dấu phòng đã sử dụng
+        $room->update(['is_available' => 'false']);
+        $confirmedRooms->push($room);
     }
+    
+
     // Cập nhật trạng thái reservation
     $reservation->update([
         'status' => 'check in',
