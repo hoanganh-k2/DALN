@@ -18,17 +18,22 @@ class FacilityReviewSeeder extends Seeder
     public function run()
     {
         $users = User::role('user')->skip(30)->take(20)->get()->pluck('id');
-        // Lấy facility codes từ database thay vì hardcode
-        $facilityCodes = Facility::pluck('code')->toArray();
+        $facilityCodes = [ '67b971a1466e3ffbf01a26fcf842bacc85feb7a2', '06ab599a280090150bbbdba527ece643855842c3', 'f0903398b6625e0d2c58a6ae6a2d626ca21c8fb1', 'd5f74d17b239ebd6a7f9accf369b0c017aae2811', '8350bb155dcf4cd92716cc2c3f93e1010c49e39e', '2b7563186c78f9a2a555c82b500f62dc9a616ee4', '7f99d296472f767a6e65bf088af047d37c0f5e52'];
         $faker = \Faker\Factory::create();
-
+        $messages = [
+    'Phòng sạch sẽ, nhân viên thân thiện.',
+    'Mình rất hài lòng với dịch vụ.',
+    'Giường êm, view đẹp, sẽ quay lại.',
+    'Đồ ăn sáng phong phú và ngon.',
+    'Không gian yên tĩnh, phù hợp nghỉ dưỡng.'
+];
         for ($i = 0; $i < count($users); $i++) {
             for ($j = 0; $j < count($facilityCodes); $j++) {
                 FacilityReview::create([
                     'code' => bin2hex(random_bytes(20)),
                     'user_id' => $users[$i],
                     'facility_code' => $facilityCodes[$j],
-                    'message' => $faker->sentence(),
+                    'message' => $messages[array_rand($messages)],
                     'star' => $faker->numberBetween(3, 5),
                     'date' => $faker->date()
                 ]);

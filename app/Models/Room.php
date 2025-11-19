@@ -12,30 +12,6 @@ class Room extends Model
 
     protected $guarded = ['id'];
 
-    /**
-     * Get the full room number with floor (for receptionist view)
-     *
-     * @return string
-     */
-    public function getFullRoomNumberAttribute()
-    {
-        return $this->floor && $this->room_number 
-            ? "Tầng {$this->floor} - Phòng {$this->room_number}" 
-            : $this->name;
-    }
-
-    /**
-     * Scope to filter rooms by floor
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param int $floor
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeByFloor($query, $floor)
-    {
-        return $query->where('floor', $floor);
-    }
-
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'], function ($query, $search) {
@@ -82,4 +58,14 @@ class Room extends Model
     {
         return $this->hasMany(RoomReview::class, 'room_code', 'code');
     }
+    public function details()
+{
+    return $this->hasMany(RoomDetail::class);
+}
+public function availableRoomsCount(): int
+{
+    return $this->details()->where('is_available','!=', 'false')->count();
+}
+
+
 }

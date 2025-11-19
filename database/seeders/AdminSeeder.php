@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
-use Faker\Factory as Faker;
 
 class AdminSeeder extends Seeder
 {
@@ -30,7 +29,7 @@ class AdminSeeder extends Seeder
 
         $admin->syncRoles('admin');
 
-        $faker = Faker::create('vi_VN');
+        $faker = \Faker\Factory::create();
 
         for ($i = 1; $i < 10; $i++) {
             $admin = User::create([
@@ -41,7 +40,7 @@ class AdminSeeder extends Seeder
                 'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
                 'phone_number' => $faker->phoneNumber(), // password
                 'remember_token' => Str::random(10),
-                'avatar' => 'img/avatar/' . Str::ascii(substr($faker->name(), 0, 1))  . '.png'
+                'avatar' => 'img/avatar/' . substr($faker->name(), 0, 1)  . '.png'
             ]);
 
             $admin->syncRoles('admin');

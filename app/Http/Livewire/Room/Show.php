@@ -27,7 +27,7 @@ class Show extends Component
         $this->dispatchBrowserEvent('reservation:created');
         $this->resetAll();
 
-        $available = (int) $this->room->total_rooms -  (int) array_sum($this->room->reservations->where('status', '<>', 'canceled')->where('status', '<>', 'check out')->pluck('total_rooms')->toArray());
+        $available = (int) $this->room->total_rooms ;
         
         $this->fill(['available' => $available]);
 
@@ -88,6 +88,8 @@ class Show extends Component
         $validatedData['code'] = str(uniqid('HLX-') . date('Ymd'))->upper();
         
         Reservation::create($validatedData);
+
+    
 
         $this->emitSelf('reservation:created');
     }

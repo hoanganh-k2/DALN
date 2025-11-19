@@ -52,7 +52,7 @@
             <div class="space-y-2">
                 <h2 class="text-2xl text-gray-800 font-bold">Reservation</h2>
                 <p class="tracking-wide text-gray-600 sm:text-base text-sm">
-                    {{ __("Interested in this room? Hurry up and book before it's too late! ") }}<span class="font-bold">{{ $available }}{{ __(' rooms available.') }}</span>
+                    {{ __("Interested in this room? Hurry up and book before it's too late! ") }}<span class="font-bold">{{ $room->availableRoomsCount() }}{{ __(' rooms available.') }}</span>
                 </p>
             </div>
             <hr>

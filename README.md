@@ -38,59 +38,54 @@ The user here is a guest for this Hollux hotel. Users can make online reservatio
 - Do a review (Finished)
 - Profile & Setting (Not finished yet)
 
-## 🛠 Cài đặt & Khởi chạy
+## Clone?
 
-### 📌 1. Clone repository
+If you want to clone this repository, go ahead. But don't admit that this is your creation :)
 
-```sh
-git clone https://github.com/hoanganh-k2/DALN.git
-cd ...
-```
+### Download assets for seeder
 
-### 📌 2. Cấu hình môi trường
+I have provided a seeder for this application, so I have also provided assets to support the seeder, if you want to download the assets, you can clone the [hollux-assets](https://github.com/abinoval/hollux-assets) respository in the storage/app/public folder and rename the hollux-assets folder to img.
 
-```sh
-cp .env.example .env
+## My other projects
 
-```
+Don't forget to stop by my other projects! Don't forget to star too *hehe*
 
-🎡 Cập nhật file `.env` với thông tin database của bạn.
+### Image to Palette
 
-### 📌 3. Cài đặt các dependencies
+![Image to Palette](https://i.postimg.cc/44rsp3Ph/Screenshot-1362.png)
 
-```sh
-composer install
-php artisan key:generate
+Link: [Github](https://github.com/abinoval/image-to-palette) | [Website](https://ksana.in/itp)
 
-```
+Desc: This website is a website for generating colors/palettes from inputted images.
 
+### My Code
 
+![My Code](https://i.postimg.cc/GpNkbYPp/Screenshot-1359.png)
 
-### 📌 4. Cập nhật file .env với thông tin database của bạn:
+Link: [Github](https://github.com/abinoval/my-code) | [Website](http://mycode.great-site.net/)
 
-```sh
+Desc: Code snippets that can be used to share your code easily.
 
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=ten_database
-DB_USERNAME=root
-DB_PASSWORD=your_password
+### PowQuran
 
+![PowQuran](https://i.postimg.cc/0NHCrhvP/Screenshot-1358.png)
 
-```
+Link: [Github](https://github.com/abinoval/PowQuran) | [Website](https://abinoval.github.io/PowQuran/)
 
-### 📌 5. Tạo database từ seeder
+Desc: PowQuran is an online Al-Quran that can be accessed on a cellphone or laptop easily, recite and listen to the holy verses wherever you are!
 
-```sh
+### Kartini Tribute Page
 
-php artisan migrate --seed
+![Kartini Tribute Page](https://i.postimg.cc/D0zF5WDq/Screenshot-1361.png)
 
-```
-### 📌 6. Chạy ứng dụng
+Link: [Github](https://github.com/abinoval/kartini-tribute-page) | [Website](http://radenayukartini.great-site.net/)
 
-```sh
-php artisan serve
-```
+Desc: Tribute Page R.A. Kartini by me :)
 
----
+### My Name
+
+![My Name](https://i.postimg.cc/pLcjB86B/Screenshot-1360.png)
+
+Link: [Github](https://github.com/abinoval/myname) | [Website](https://ksana.in/my)
+
+Desc: Easy-to-use name generator from different countries and genders.

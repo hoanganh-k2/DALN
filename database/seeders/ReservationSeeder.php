@@ -16,21 +16,15 @@ class ReservationSeeder extends Seeder
      */
     public function run()
     {
-        // Tạo 100 reservations ngẫu nhiên cho tất cả loại phòng
-        Reservation::factory(100)->create();
+        Reservation::factory(10)->create();
 
-        // Cập nhật available cho TẤT CẢ các phòng
-        $rooms = Room::all();
-        
-        foreach ($rooms as $room) {
-            // Tính số phòng còn trống dựa trên các reservation active
-            $bookedRooms = $room->reservations()
-                ->whereIn('status', ['waiting', 'confirmed', 'check in'])
-                ->sum('total_rooms');
-            
-            $available = max(0, (int) $room->total_rooms - (int) $bookedRooms);
-            
-            $room->update(['available' => $available]);
+        for ($i=1; $i <= 14; $i++) { 
+            $room = Room::find($i);
+
+            $available = (int) $room->total_rooms -  (int) array_sum($room->reservations->where('status', '<>', 'canceled')->where('status', '<>', 'check out')->pluck('total_rooms')->toArray());
+
+            $room->update(['available' =>  $available]);
         }
+
     }
 }

@@ -242,7 +242,7 @@
                 </div>
                 <div class="text-center">
                     <div class="text-3xl font-bold text-green-600">
-                        {{ $rooms->filter(fn($r) => $this->getRoomStatus($r) == 'available')->count() }}
+                        {{ $rooms->count() - $rooms->filter(fn($r) => $this->getRoomStatus($r) == 'occupied')->count()}}
                     </div>
                     <div class="text-sm text-gray-600 mt-1">Còn trống</div>
                 </div>
@@ -250,7 +250,7 @@
                     <div class="text-3xl font-bold text-blue-600">
                         {{ $rooms->filter(fn($r) => $this->getRoomStatus($r) == 'reserved')->count() }}
                     </div>
-                    <div class="text-sm text-gray-600 mt-1">Chờ xác nhận</div>
+                    <div class="text-sm text-gray-600 mt-1">Chờ check-in</div>
                 </div>
                 <div class="text-center">
                     <div class="text-3xl font-bold text-teal-600">

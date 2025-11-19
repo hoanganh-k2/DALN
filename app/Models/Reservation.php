@@ -14,15 +14,21 @@ class Reservation extends Model
 
     public function scopeFilter($query, array $filters)
     {
-        $query->when($filters['search'], fn ($query, $search) =>
-            $query->whereHas('user', fn ($query) => $query->where('name', 'like', "%$search%"))->orWhere('code', $search)
+        $query->when(
+            $filters['search'],
+            fn($query, $search) =>
+            $query->whereHas('user', fn($query) => $query->where('name', 'like', "%$search%"))->orWhere('code', $search)
         );
 
-        $query->when($filters['check_in'], fn ($query, $check_in) =>
+        $query->when(
+            $filters['check_in'],
+            fn($query, $check_in) =>
             $query->whereDate('check_in', $check_in)
         );
 
-        $query->when($filters['status'], fn ($query, $status) =>
+        $query->when(
+            $filters['status'],
+            fn($query, $status) =>
             $query->where('status', $status)
         );
     }
@@ -55,5 +61,11 @@ class Reservation extends Model
     public function room(): BelongsTo
     {
         return $this->belongsTo(Room::class);
+    }
+    public function roomDetails()
+    {
+        return $this->belongsToMany(RoomDetail::class, 'reservation_room_details')
+            ->withPivot(['price', 'status'])
+            ->withTimestamps();
     }
 }

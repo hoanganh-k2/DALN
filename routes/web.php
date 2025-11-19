@@ -14,13 +14,11 @@ use App\Http\Controllers\ChatbotController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 Route::get('/chatbot', function () {
     return view('chatbot');
 })->name('chatbot.view');
 
 Route::post('/chatbot/send', [ChatbotController::class, 'sendMessage'])->name('chatbot.send');
-
 Route::namespace('App\Http\Livewire')->group(function () {
     //? Routes that can be accessed only when logging in
     Route::middleware(['verified'])->group(function () {
@@ -84,8 +82,6 @@ Route::namespace('App\Http\Livewire')->group(function () {
                     Route::get('/', Index::class)->name('index');
                     Route::get('/proof/{reservation:code}', [ReservationProof::class, 'render'])->name('proof');
                 });
-
-                //? To view room floor plan
                 Route::prefix('/rooms')->namespace('Room')->name('rooms.')->group(function () {
                     Route::get('/', Index::class)->name('index');
                     Route::get('/{room:code}', Show::class)->name('show');

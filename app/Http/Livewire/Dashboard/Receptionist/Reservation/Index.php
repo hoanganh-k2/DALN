@@ -6,6 +6,8 @@ use App\Models\Reservation;
 use App\Models\Room;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\RoomDetail;
+use Carbon\Carbon;
 
 class Index extends Component
 {
@@ -21,7 +23,7 @@ class Index extends Component
         'status' => ['except' => ''],
     ];
 
-    protected $listeners = ['status:confirmed' => 'statusConfirmed', 'status:checkin' => 'statusCheckIn', 'status:checkout' => 'statusCheckOut', 'status:canceled' => 'statusCanceled'];
+    protected $listeners = ['status:confirmed' => 'statusConfirmed', 'status:checkin' => 'statusCheckIn', 'status:checkout' => 'statusCheckOut'];
 
     public function render()
     {
@@ -33,60 +35,137 @@ class Index extends Component
     public function confirm($code)
     {
         $reservation = Reservation::firstWhere('code', $code);
-        $reservation->update(['status' => 'confirmed']);
         
-        // Cập nhật trạng thái phòng
-        $room = Room::find($reservation->room_id);
-        if ($room) {
-            // Giảm số phòng available
-            $room->available = max(0, $room->available - $reservation->total_rooms);
-            $room->save();
+
+        $reservation = Reservation::firstWhere('code', $code);
+        if (!$reservation) {
+            session()->flash('error', 'Reservation không tồn tại.');
+            return;
         }
-        
+
+        // Số phòng cần gán
+        $numRooms = (int) $reservation->total_rooms;
+
+        // Tìm phòng RoomDetail còn trống thuộc loại phòng đó
+        $availableRooms = RoomDetail::where('room_id', $reservation->room_id)
+            ->where('is_available','!=', 'false')
+            ->take($numRooms)
+            ->get();
+
+        if ($availableRooms->count() < $numRooms) {
+            session()->flash('error', 'Không đủ phòng trống để đặt.');
+            return;
+        }
+
+        // Gán phòng vào reservation
+        foreach ($availableRooms as $room) {
+            $reservation->roomDetails()->attach($room->id, [
+                'status' => 'confirmed',
+                'price' => $reservation->total_price / $numRooms, // nếu muốn chia theo giá
+            ]);
+
+            // Đánh dấu phòng đã sử dụng
+            $room->update(['is_available' => 'confirmed']);
+        }
+
+        // Cập nhật trạng thái reservation
+        $reservation->update(['status' => 'confirmed']);
         $this->emitSelf('status:confirmed');
-        session()->flash('message', 'Đã xác nhận đặt phòng thành công!');
+        session()->flash('message', 'xác nhận thành công!');
     }
 
     public function checkIn($code)
-    {
-        $reservation = Reservation::firstWhere('code', $code);
-        $reservation->update(['status' => 'check in']);
-        
-        // Cập nhật trạng thái phòng - phòng đang được sử dụng
-        $room = Room::find($reservation->room_id);
-        if ($room) {
-            // Đánh dấu phòng cần dọn sau khi check-in (đang sử dụng)
-            $room->cleaning_status = 'clean'; // Phòng sạch khi khách vào
-            $room->save();
-        }
-        
-        $this->emitSelf('status:checkin');
-        session()->flash('message', 'Check-in thành công! Phòng đã sẵn sàng cho khách.');
+{
+    $reservation = Reservation::with('roomDetails')->firstWhere('code', $code);
+
+    if (!$reservation) {
+        session()->flash('error', 'Reservation không tồn tại.');
+        return;
     }
+
+    // Lấy tất cả RoomDetail đã confirm
+    $confirmedRooms = $reservation->roomDetails->filter(function($room) {
+        return $room->pivot->status === 'confirmed';
+    });
+
+    if ($confirmedRooms->isEmpty()) {
+        session()->flash('error', 'Reservation chưa được xác nhận phòng.');
+        return;
+    }
+
+    // Đánh dấu tất cả phòng đã confirm thành check-in
+    foreach ($confirmedRooms as $roomPivot) {
+        $room = RoomDetail::find($roomPivot->id);
+        $pivotId = $roomPivot->pivot->id;
+    if ($room->is_available == 'false') {
+        // Tìm phòng khác cùng loại còn trống
+        $replacement = RoomDetail::where('room_id', $reservation->room_id)
+            ->where('is_available','!=','false')
+            ->first();
+
+        if (!$replacement) {
+            session()->flash('error', 'Không còn phòng trống để thay thế.');
+            return;
+        }
+
+         // Xóa pivot cũ
+    $reservation->roomDetails()->detach($roomPivot->id);
+
+    // Tạo pivot mới với phòng mới
+    $reservation->roomDetails()->attach($replacement->id, [
+        'status' => 'check in',
+        'price' => $reservation->total_price / $reservation->total_rooms,
+    ]);
+
+        // Đánh dấu phòng mới đã bận
+        $replacement->update(['is_available' => 'false']);
+
+    } else {
+        // Phòng còn trống → check-in bình thường
+        $roomPivot->pivot->update(['status' => 'check in']);
+        $room->update(['is_available' => 'false']);
+    }
+
+        
+    }
+
+    // Cập nhật trạng thái reservation
+    $reservation->update([
+        'status' => 'check in',
+        'check_in_time' => \Carbon\Carbon::now()->format('H:i:s')
+    ]);
+     $roomTypeId = $confirmedRooms->first()->room_id; // vì tất cả đều giống nhau
+    $roomType = Room::find($roomTypeId);
+
+    if ($roomType) {
+        $usedRooms = RoomDetail::where('room_id', $roomTypeId)
+            ->where('is_available', 'false')
+            ->count();
+
+        $roomType->update([
+            'available' => $roomType->total_rooms - $usedRooms
+        ]);
+    }
+
+    $this->emitSelf('status:checkin');
+    session()->flash('message', 'Check-in thành công!');
+}
+
 
     public function checkOut($code)
     {
         $reservation = Reservation::firstWhere('code', $code);
-        $room = Room::find($reservation->room_id);
-        
-        $reservation->update(['status' => 'check out']);
-        
-        if ($room) {
-            // Tính lại số phòng available
-            $room->available = $room->total_rooms - array_sum(
-                $room->reservations
-                    ->whereIn('status', ['waiting', 'confirmed', 'check in'])
-                    ->pluck('total_rooms')
-                    ->toArray()
-            );
-            
-            // Đánh dấu phòng cần dọn sau khi check-out
-            $room->cleaning_status = 'dirty';
-            $room->save();
+        $room = Room::firstWhere('code', $reservation->room->code);
+        foreach ($reservation->roomDetails as $roomdetail) {
+            $roomdetail->update(['is_available' => 'true']);
+
+            // Cập nhật pivot status
+            $reservation->roomDetails()->updateExistingPivot($roomdetail->id, ['status' => 'checked out']);
         }
-        
+        $reservation->update(['status' => 'check out', 'check_out_time' => Carbon::now()->format('H:i:s')]);
+        $room->available = $room->available + $reservation->total_rooms;
+        $room->save();
         $this->emitSelf('status:checkout');
-        session()->flash('message', 'Check-out thành công! Phòng cần dọn dẹp.');
     }
 
     public function statusConfirmed()
@@ -102,32 +181,5 @@ class Index extends Component
     public function statusCheckOut()
     {
         $this->dispatchBrowserEvent('status:checkout');
-    }
-
-    public function statusCanceled()
-    {
-        $this->dispatchBrowserEvent('status:canceled');
-    }
-
-    public function cancel($code)
-    {
-        $reservation = Reservation::firstWhere('code', $code);
-        $room = Room::find($reservation->room_id);
-        
-        $reservation->update(['status' => 'canceled']);
-        
-        if ($room) {
-            // Hoàn lại số phòng available
-            $room->available = $room->total_rooms - array_sum(
-                $room->reservations
-                    ->whereIn('status', ['waiting', 'confirmed', 'check in'])
-                    ->pluck('total_rooms')
-                    ->toArray()
-            );
-            $room->save();
-        }
-        
-        $this->emitSelf('status:canceled');
-        session()->flash('message', 'Đã hủy đặt phòng.');
     }
 }

@@ -27,7 +27,8 @@ class DatabaseSeeder extends Seeder
             ReceptionistSeeder::class,
             RoomReviewSeeder::class,
             FacilityReviewSeeder::class,
-            ReservationSeeder::class
+            ReservationSeeder::class,
+            RoomDetailSeeder::class
         ]);
     }
 }

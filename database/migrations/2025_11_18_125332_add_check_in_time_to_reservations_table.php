@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('rooms', function (Blueprint $table) {
-            //
+        Schema::table('reservations', function (Blueprint $table) {
+            $table->time('check_in_time')->nullable();
         });
     }
 
@@ -25,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('rooms', function (Blueprint $table) {
-            //
+        Schema::table('reservations', function (Blueprint $table) {
+            $table->dropColumn('check_in_time');
         });
     }
 };

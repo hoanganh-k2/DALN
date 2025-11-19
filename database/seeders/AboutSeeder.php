@@ -17,7 +17,7 @@ class AboutSeeder extends Seeder
     {
         About::create([
             'title' => 'Starting From the Travelers',
-            'text' => 'Berawal dari kami para traveler bernama lala, lili, lele, lolo, lulu yang sedang menjelajah antartika menggunakan sepeda mobil dan dibakar ke hutan amazon oleh kucing oren dan akhirnya bertemu dengan hotel transilvania yang berada di afrika tapi ternyata yang punya orang utan, bukan orang cina. Dari situ kami terus bersama sampai alien datang ke merkurius dan mencuri dragon ball untuk dijadikan sayur sop kaum milenial. Akhirnya jadilah hotel ini.',
+            'text' => 'Hotel offers accommodation with a fitness centre, free private parking, a shared lounge and a terrace. This 4-star hotel offers room service and a concierge service. The accommodation offers a 24-hour front desk, airport transfers, a shared kitchen and free Wi-Fi in all areas.',
             'image' => 'img/about/about.jpg'
         ]);
     }

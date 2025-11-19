@@ -18,17 +18,22 @@ class RoomReviewSeeder extends Seeder
     public function run()
     {
         $users = User::role('user')->skip(1)->take(20)->get()->pluck('id');
-        // Lấy room codes từ database thay vì hardcode
-        $roomCodes = Room::pluck('code')->toArray();
+        $roomCodes = ['6d0929022a3f483cee01a71c8bb07cd497e12a2a', 'a325d27311d54f329d8efc903fa29147c87cb474', 'b04ccf712c8bf355b8d6ffbd8677190c52e5e1af', 'c004fc694adae94c9915ce4908d331fee3ac2e16', '0d512be37d5472ffad8b38e631b1f6d4ac52406e', '7ecf1c829efcf26958228f456ea648f07407e4c6', 'ef96f87eb0697be3d8f8d3338528752542d0fe18', 'd2e35973667acbcc21bf806fa9c4816811f93480', 'e68df0c1d217535de4a78bfac1935024187dad2c', 'd38e58c1f31900d29e1f95f729bab3e78f96a366', '92a4173c7dfd3fddbf45506ddd46d9bfaf706299', 'd0694a03e5dd6aac9814f28bb14a90effea15b01', '85dfe0fe296ce37d036a48e28e1dffd7037d0fd3', 'd3535f13cb58a761833f745c69cee5d8d689125b'];
         $faker = \Faker\Factory::create();
-
+        $messages = [
+    'Phòng sạch sẽ, nhân viên thân thiện.',
+    'Mình rất hài lòng với dịch vụ.',
+    'Giường êm, view đẹp, sẽ quay lại.',
+    'Đồ ăn sáng phong phú và ngon.',
+    'Không gian yên tĩnh, phù hợp nghỉ dưỡng.'
+];
         for ($i=0; $i < count($users); $i++) { 
             for ($j=0; $j < count($roomCodes); $j++) { 
                 RoomReview::create([
                     'code' => bin2hex(random_bytes(20)),
                     'user_id' => $users[$i],
                     'room_code' => $roomCodes[$j],
-                    'message' => $faker->sentence(),
+                    'message' => $messages[array_rand($messages)],
                     'star' => $faker->numberBetween(3, 5),
                     'date' => $faker->date()
                 ]);

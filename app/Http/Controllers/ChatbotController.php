@@ -47,6 +47,7 @@ Quy tắc phản hồi:
 3. Nếu câu hỏi vượt khả năng → đề xuất liên hệ lễ tân qua số điện thoại 012-345-6789.
 4. Luôn sử dụng tiếng Việt.
 5. Chỉ trả lời các câu hỏi liên quan khách sạn và du lịch.";
+
         try {
             // 🚀 Gửi request đến Gemini API
             $response = Http::withoutVerifying()->timeout(50)

@@ -13,18 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('rooms', function (Blueprint $table) {
+        Schema::create('room_details', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('room_id')->constrained()->onDelete('cascade');
             $table->string('code')->unique();
             $table->string('name');
-            $table->string('total_rooms');
-            $table->string('image');
-            $table->string('description');
-            $table->text('explanation');
-            $table->string('rate')->default(0);
+            $table->string('room_number')->unique(); // Mã phòng cụ thể
+            $table->string('is_available')->default('true'); // Trạng thái phòng
+            $table->integer('floor')->nullable();
+            $table->string('cleaning_status')->default('clean');
+            $table->string('image')->nullable();
+            $table->text('description')->nullable();
             $table->string('price');
-            $table->string('available');
-            $table->string('views')->default(0);
             $table->timestamps();
         });
     }
@@ -36,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('rooms');
+        Schema::dropIfExists('room_details');
     }
 };

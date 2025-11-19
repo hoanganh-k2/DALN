@@ -33,11 +33,11 @@
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <div class="text-sm text-gray-600">Rating</div>
-                            <div class="text-2xl font-bold text-yellow-600">{{ $room->rate }} ⭐</div>
+                            <div class="text-2xl font-bold text-yellow-600">5⭐</div>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <div class="text-sm text-gray-600">Tổng số phòng</div>
-                            <div class="text-2xl font-bold text-gray-800">{{ $room->total_rooms }}</div>
+                            <div class="text-2xl font-bold text-gray-800">{{ $room->room->total_rooms }}</div>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <div class="text-sm text-gray-600">Còn trống</div>
@@ -112,22 +112,7 @@
 
         {{-- Sidebar --}}
         <div class="space-y-6">
-            {{-- Facilities --}}
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <h3 class="text-xl font-bold text-gray-800 mb-4">Tiện nghi</h3>
-                <div class="space-y-2">
-                    @forelse($room->facilities as $facility)
-                        <div class="flex items-center gap-2 text-sm">
-                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            <span class="text-gray-700">{{ $facility->facility->name ?? 'N/A' }}</span>
-                        </div>
-                    @empty
-                        <p class="text-gray-500 text-sm">Chưa có tiện nghi nào</p>
-                    @endforelse
-                </div>
-            </div>
+            
 
             {{-- Quick Stats --}}
             <div class="bg-blue-50 rounded-lg shadow-md p-6">
@@ -135,11 +120,11 @@
                 <div class="space-y-3">
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-600">Lượt xem</span>
-                        <span class="font-semibold text-gray-800">{{ $room->views }}</span>
+                        <span class="font-semibold text-gray-800">3000</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-600">Đánh giá</span>
-                        <span class="font-semibold text-gray-800">{{ $room->reviews->count() }}</span>
+                        <span class="font-semibold text-gray-800">3000</span>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-sm text-gray-600">Đặt phòng</span>

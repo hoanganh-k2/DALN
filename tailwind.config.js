@@ -18,6 +18,6 @@ module.exports = {
     plugins: [
         require("@tailwindcss/forms"),
         require("@tailwindcss/typography"),
-        // @tailwindcss/line-clamp is now included by default in Tailwind CSS v3.3+
+        require("@tailwindcss/line-clamp")
     ],
 };

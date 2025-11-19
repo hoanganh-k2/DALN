@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\Dashboard\Receptionist\Room;
 
-use App\Models\Room;
+use App\Models\RoomDetail;
 use Livewire\Component;
 
 class Index extends Component
@@ -13,7 +13,7 @@ class Index extends Component
     public function render()
     {
         $rooms = $this->loadRooms();
-        
+
         return view('livewire.dashboard.receptionist.room.index', [
             'rooms' => $rooms
         ])->layoutData(['title' => 'Room Management | Hollux']);
@@ -22,13 +22,13 @@ class Index extends Component
     public function mount()
     {
         // Lấy danh sách tầng
-        $this->floors = Room::select('floor')
+        $this->floors = RoomDetail::select('floor')
             ->whereNotNull('floor')
             ->distinct()
             ->orderBy('floor')
             ->pluck('floor')
             ->toArray();
-        
+
         // Mặc định chọn tầng đầu tiên
         $this->selectedFloor = $this->floors[0] ?? 1;
     }
@@ -38,36 +38,79 @@ class Index extends Component
         $this->selectedFloor = $floor;
     }
 
+    // public function loadRooms()
+    // {
+    //     if ($this->selectedFloor) {
+    //         return RoomDetail::with(['reservations' => function ($query) {
+    //             $query->whereIn('status', ['waiting', 'confirmed', 'check in']);
+    //         }])
+    //             ->where('floor', $this->selectedFloor)
+    //             ->orderBy('room_number')
+    //             ->get();
+    //     }
+
+    //     return collect();
+    // }
+
     public function loadRooms()
     {
         if ($this->selectedFloor) {
-            return Room::with(['reservations' => function($query) {
-                    $query->whereIn('status', ['waiting', 'confirmed', 'check in']);
-                }])
-                ->where('floor', $this->selectedFloor)
+            return RoomDetail::where('floor', $this->selectedFloor)
                 ->orderBy('room_number')
+                ->with(['reservations' => function($q){
+                    $q->whereIn('reservation_room_details.status', ['waiting', 'confirmed', 'check in']);
+                }])
                 ->get();
         }
-        
+
         return collect();
     }
 
+
+    // public function getRoomStatus($room)
+    // {
+    //     $activeReservations = $room->reservations->whereIn('status', ['waiting', 'confirmed', 'check in']);
+
+    //     if ($activeReservations->count() > 0) {
+    //         if ($activeReservations->where('status', 'check in')->count() > 0) {
+    //             return 'occupied'; // Đang có khách
+    //         } elseif ($activeReservations->where('status', 'confirmed')->count() > 0) {
+    //             return 'reserved'; // Đã đặt trước
+    //         } else {
+    //             return 'waiting'; // Đang chờ xác nhận
+    //         }
+    //     }
+
+    //     return 'available'; // Còn trống
+    // }
+
     public function getRoomStatus($room)
-    {
-        $activeReservations = $room->reservations->whereIn('status', ['waiting', 'confirmed', 'check in']);
-        
-        if ($activeReservations->count() > 0) {
-            if ($activeReservations->where('status', 'check in')->count() > 0) {
-                return 'occupied'; // Đang có khách
-            } elseif ($activeReservations->where('status', 'confirmed')->count() > 0) {
-                return 'reserved'; // Đã đặt trước
-            } else {
-                return 'waiting'; // Đang chờ xác nhận
-            }
+{
+    // Lấy danh sách reservation của RoomDetail theo pivot status
+     $activeReservations = $room->reservations->filter(function ($reservation) {
+        return in_array($reservation->pivot->status, ['waiting', 'confirmed', 'check in']);
+    });
+
+    if ($activeReservations->count() > 0) {
+
+        // Đang ở check-in → có khách
+        if ($activeReservations->contains(function($res) { return $res->pivot->status === 'check in'; })) {
+            return 'occupied';
         }
-        
-        return 'available'; // Còn trống
+
+        // Đã đặt trước nhưng chưa check-in
+        if ($activeReservations->contains(function($res) { return $res->pivot->status === 'confirmed'; })) {
+            return 'reserved';
+        }
+
+        // Đặt nhưng chưa được duyệt
+        if ($activeReservations->contains(function($res) { return $res->pivot->status === 'waiting'; })) {
+            return 'waiting';
+        }
     }
+    return 'available'; // Không có reservation nào đang active
+}
+
 
     protected $listeners = ['openRoomDetail', 'markRoomCleaned'];
 
@@ -78,7 +121,7 @@ class Index extends Component
 
     public function markRoomCleaned($roomCode)
     {
-        $room = Room::where('code', $roomCode)->first();
+        $room = RoomDetail::where('code', $roomCode)->first();
         if ($room) {
             $room->cleaning_status = 'clean';
             $room->save();
@@ -88,7 +131,7 @@ class Index extends Component
 
     public function markRoomDirty($roomCode)
     {
-        $room = Room::where('code', $roomCode)->first();
+        $room = RoomDetail::where('code', $roomCode)->first();
         if ($room) {
             $room->cleaning_status = 'dirty';
             $room->save();
@@ -98,7 +141,7 @@ class Index extends Component
 
     public function markRoomCleaning($roomCode)
     {
-        $room = Room::where('code', $roomCode)->first();
+        $room = RoomDetail::where('code', $roomCode)->first();
         if ($room) {
             $room->cleaning_status = 'cleaning';
             $room->save();

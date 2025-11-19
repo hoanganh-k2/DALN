@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('rooms', function (Blueprint $table) {
-            $table->enum('cleaning_status', ['clean', 'dirty', 'cleaning'])->default('clean')->after('available');
+        Schema::table('reservations', function (Blueprint $table) {
+            $table->time('check_out_time')->nullable();
         });
     }
 
@@ -25,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('rooms', function (Blueprint $table) {
-            $table->dropColumn('cleaning_status');
+        Schema::table('reservations', function (Blueprint $table) {
+            $table->dropColumn('check_out_time');
         });
     }
 };
