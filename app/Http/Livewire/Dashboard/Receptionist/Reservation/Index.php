@@ -48,7 +48,7 @@ class Index extends Component
 
         // Tìm phòng RoomDetail còn trống thuộc loại phòng đó
         $availableRooms = RoomDetail::where('room_id', $reservation->room_id)
-            ->where('is_available','!=', 'false')
+            ->where('is_available', 'true')
             ->take($numRooms)
             ->get();
 
@@ -65,7 +65,7 @@ class Index extends Component
             ]);
 
             // Đánh dấu phòng đã sử dụng
-            $room->update(['is_available' => 'confirmed']);
+            $room->update(['is_available' => 'false']);
         }
 
         // Cập nhật trạng thái reservation
@@ -94,41 +94,9 @@ class Index extends Component
     }
 
     // Đánh dấu tất cả phòng đã confirm thành check-in
-    foreach ($confirmedRooms as $roomPivot) {
-        $room = RoomDetail::find($roomPivot->id);
-        $pivotId = $roomPivot->pivot->id;
-    if ($room->is_available == 'false') {
-        // Tìm phòng khác cùng loại còn trống
-        $replacement = RoomDetail::where('room_id', $reservation->room_id)
-            ->where('is_available','!=','false')
-            ->first();
-
-        if (!$replacement) {
-            session()->flash('error', 'Không còn phòng trống để thay thế.');
-            return;
-        }
-
-         // Xóa pivot cũ
-    $reservation->roomDetails()->detach($roomPivot->id);
-
-    // Tạo pivot mới với phòng mới
-    $reservation->roomDetails()->attach($replacement->id, [
-        'status' => 'check in',
-        'price' => $reservation->total_price / $reservation->total_rooms,
-    ]);
-
-        // Đánh dấu phòng mới đã bận
-        $replacement->update(['is_available' => 'false']);
-
-    } else {
-        // Phòng còn trống → check-in bình thường
-        $roomPivot->pivot->update(['status' => 'check in']);
-        $room->update(['is_available' => 'false']);
+    foreach ($confirmedRooms as $room) {
+        $room->pivot->update(['status' => 'check in']);
     }
-
-        
-    }
-
     // Cập nhật trạng thái reservation
     $reservation->update([
         'status' => 'check in',
