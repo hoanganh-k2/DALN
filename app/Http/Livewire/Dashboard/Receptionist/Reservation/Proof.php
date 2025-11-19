@@ -1,13 +1,13 @@
 <?php
 
 namespace App\Http\Livewire\Dashboard\Receptionist\Reservation;
-
+use App\Http\Controllers\Controller;
 use App\Models\Reservation;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
-use Livewire\Component;
 
-class Proof extends Component
+
+class Proof extends Controller
 {
     public function render(Reservation $reservation)
     {
