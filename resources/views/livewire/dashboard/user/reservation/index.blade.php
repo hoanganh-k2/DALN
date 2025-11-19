@@ -4,10 +4,10 @@
     <x-table>
         <thead class="thead">
             <tr>
-                <th scope="col" class="th">Code</th>
                 <th scope="col" class="th">Room</th>
                 <th scope="col" class="th">Check In</th>
                 <th scope="col" class="th">Check Out</th>
+                <th scope="col" class="th">Time</th>        
                 <th scope="col" class="th">Total Room(s)</th>
                 <th scope="col" class="th">Total Price</th>
                 <th scope="col" class="th">Status</th>
@@ -17,12 +17,12 @@
         <tbody>
             @forelse ($reservations as $reservation)
                 <tr class="bg-white border-b">
-                    <td class="td font-medium text-gray-900">{{ $reservation->code }}</td>
                     <td class="td">
                         <a class="underline" href="{{ route('rooms.show', $reservation->room->code) }}">{{ $reservation->room->name }}</a>
                     </td>
                     <td class="td">{{ $reservation->check_in }}</td>
                     <td class="td">{{ $reservation->check_out }}</td>
+                    <td class="td">{{ $reservation->check_in_time }} : {{$reservation->check_out_time}}</td>
                     <td class="td">{{ $reservation->total_rooms }}</td>
                     <td class="td">${{ $reservation->total_price }}</td>
                     <td class="td capitalize">{{ $reservation->status }}</td>

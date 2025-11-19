@@ -49,7 +49,7 @@
                         {{ $room->description }}
                     </p>
                 </div>
-                <span class="text-sm text-gray-600 bg-gray-200 py-2 text-center rounded-tr-xl rounded-bl-xl block">{{ (int) $room->total_rooms -  (int) $room->reservations->count()}} rooms available</span>
+                <span class="text-sm text-gray-600 bg-gray-200 py-2 text-center rounded-tr-xl rounded-bl-xl block">{{ $room->availableRoomsCount() }} rooms available</span>
                 <div class="flex gap-2">
                     <a class="btn btn-sm" href="{{ route('dashboard.admin.rooms.edit', $room->code) }}">Edit</a>
                     <button wire:click='delete("{{ $room->code }}")' class="btn btn-sm btn-outline">Delete</button>
@@ -116,7 +116,7 @@
                                 @endforeach
                             @endif
                         </article>
-                        <span class="text-sm text-gray-600 bg-gray-200 py-2 text-center rounded-tr-xl rounded-bl-xl block">{{ (int) $selectedRoom->total_rooms -  (int) $selectedRoom->reservations->count()}} rooms available</span>
+                        <span class="text-sm text-gray-600 bg-gray-200 py-2 text-center rounded-tr-xl rounded-bl-xl block">{{ (int) $selectedRoom->availableRoomsCount() }} rooms available</span>
                         <button type="button" wire:click="cancel" x-on:click="open = false" class="btn">
                             Okay
                         </button>

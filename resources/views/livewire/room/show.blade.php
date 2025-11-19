@@ -115,7 +115,7 @@
                             </div>
                             <div class="form-control">
                                 <label for="total_rooms" class="label">{{ __('Total Rooms') }}</label>
-                                <input class="w-full input" type="number" name="total_rooms" min="1" max="{{ $available }}" wire:keyup='setPrice' wire:model="total_rooms" id="total_rooms"/>
+                                <input class="w-full input" type="number" name="total_rooms" min="1" max="{{ $room->total_rooms }}" wire:keyup='setPrice' wire:model="total_rooms" id="total_rooms"/>
                                 @error('total_rooms')
                                     <span class="invalid">{{ $message }}</span>
                                 @enderror

@@ -248,13 +248,14 @@
                 </div>
                 <div class="text-center">
                     <div class="text-3xl font-bold text-blue-600">
-                        {{ $rooms->filter(fn($r) => $this->getRoomStatus($r) == 'reserved')->count() }}
+                        
+                          {{ $rooms->flatMap->reservations->where('pivot.status', 'confirmed')->count() }}
                     </div>
                     <div class="text-sm text-gray-600 mt-1">Chờ check-in</div>
                 </div>
                 <div class="text-center">
                     <div class="text-3xl font-bold text-teal-600">
-                        {{ $rooms->filter(fn($r) => $this->getRoomStatus($r) == 'occupied')->count() }}
+                        {{ $rooms->filter(fn($r) => $this->getRoomStatus($r) === 'occupied')->count() }}
                     </div>
                     <div class="text-sm text-gray-600 mt-1">Đang ở</div>
                 </div>

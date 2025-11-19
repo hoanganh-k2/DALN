@@ -21,7 +21,7 @@ class Index extends Component
     public function render()
     {
         return view('livewire.dashboard.admin.room.index', [
-            'rooms' => Room::filter(['search' => $this->search])->latest()->paginate(10)
+            'rooms' => Room::filter(['search' => $this->search])->latest()->paginate(20)
         ])->layoutData(['title' => 'Room Dashboard | Hollux']);
     }
 

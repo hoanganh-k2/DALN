@@ -87,8 +87,8 @@ class Index extends Component
     public function getRoomStatus($room)
 {
     // Lấy danh sách reservation của RoomDetail theo pivot status
-     $activeReservations = $room->reservations->filter(function ($reservation) {
-        return in_array($reservation->pivot->status, ['waiting', 'confirmed', 'check in']);
+    $activeReservations = $room->reservations->filter(function ($reservation) {
+        return in_array($reservation->pivot->status, ['confirmed', 'check in']);
     });
 
     if ($activeReservations->count() > 0) {
@@ -102,14 +102,10 @@ class Index extends Component
         if ($activeReservations->contains(function($res) { return $res->pivot->status === 'confirmed'; })) {
             return 'reserved';
         }
-
-        // Đặt nhưng chưa được duyệt
-        if ($activeReservations->contains(function($res) { return $res->pivot->status === 'waiting'; })) {
-            return 'waiting';
-        }
     }
     return 'available'; // Không có reservation nào đang active
 }
+
 
 
     protected $listeners = ['openRoomDetail', 'markRoomCleaned'];
