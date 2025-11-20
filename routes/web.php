@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Livewire\Dashboard\Receptionist\Reservation\Proof as ReservationProof;
-use App\Http\Livewire\Dashboard\User\Reservation\Proof;
+use App\Http\Livewire\Dashboard\User\Reservation\Proof as UserReservationProof;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ChatbotController;
 /*
@@ -59,8 +59,8 @@ Route::namespace('App\Http\Livewire')->group(function () {
 
                 Route::prefix('/reservation')->namespace('Reservation')->name('reservations.')->group(function () {
                     Route::get('/', Index::class)->name('index');
-                    Route::get('/proof/{reservation:code}', [Proof::class, 'render'])->name('proof');
                 });
+                Route::get('/reservation/proof/{reservation:code}', [UserReservationProof::class, 'render'])->name('reservations.proof');
 
                 Route::prefix('/reviews')->namespace('Review')->name('reviews.')->group(function () {
                     Route::namespace('Room')->group(function () {
