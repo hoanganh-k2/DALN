@@ -8,8 +8,9 @@
                 <th scope="col" class="th">Check In</th>
                 <th scope="col" class="th">Check Out</th>
                 <th scope="col" class="th">Time</th>        
-                <th scope="col" class="th">Total Room(s)</th>
-                <th scope="col" class="th">Total Price</th>
+                <th scope="col" class="th">Quantity</th>
+                <th scope="col" class="th">Room Number</th>
+                <th scope="col" class="th">Price</th>
                 <th scope="col" class="th">Status</th>
                 <th scope="col" class="th">Action</th>
             </tr>
@@ -24,6 +25,16 @@
                     <td class="td">{{ $reservation->check_out }}</td>
                     <td class="td">{{ $reservation->check_in_time }} : {{$reservation->check_out_time}}</td>
                     <td class="td">{{ $reservation->total_rooms }}</td>
+                    <td class="td">
+                        <!-- <div class="flex flex-wrap gap-1"> -->
+                            @foreach($reservation->roomDetails as $roomDetail)
+                                <a href="{{ route('dashboard.receptionist.rooms.show', $roomDetail->code) }}"
+                                   class="inline-block bg-gray-200 text-gray-800 px-2 py-1 rounded text-sm mb-1 hover:bg-gray-300">
+                                    {{ $roomDetail->room_number }}
+                                </a>
+                            @endforeach
+                        <!-- </div> -->
+                    </td>
                     <td class="td">${{ $reservation->total_price }}</td>
                     <td class="td capitalize">{{ $reservation->status }}</td>
                     <td class="td flex space-x-2">
@@ -66,7 +77,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8" class="td">There is nothing here</td>
+                    <td colspan="9" class="td">There is nothing here</td>
                 </tr>
             @endforelse
         </tbody>

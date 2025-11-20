@@ -28,7 +28,7 @@ class Index extends Component
     public function render()
     {
         return view('livewire.dashboard.receptionist.reservation.index', [
-            'reservations' => Reservation::filter(['search' => $this->search, 'check_in' => $this->check_in, 'status' => $this->status])->latest()->paginate(50)
+            'reservations' => Reservation::filter(['search' => $this->search, 'check_in' => $this->check_in, 'status' => $this->status])->latest()->paginate(10)
         ])->layoutData(['title' => 'Reservation | Hollux']);
     }
 

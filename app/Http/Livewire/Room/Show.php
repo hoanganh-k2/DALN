@@ -77,7 +77,7 @@ class Show extends Component
         $validatedData = $this->validate([
             'check_in' => ['required', 'date', 'after:' . Carbon::parse($this->minCheckIn)->yesterday()->toDateString()],
             'check_out' => ['required', 'date', 'after:' . Carbon::parse($this->minCheckOut)->yesterday()->toDateString()],
-            'total_rooms' => ['required', 'numeric', 'max:' . $this->available, 'min:1'],
+            'total_rooms' => ['required', 'numeric', 'max:' . $this->total_rooms, 'min:1'],
         ]);
 
         $validatedData['room_id'] = $this->room->id;
