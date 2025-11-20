@@ -12,7 +12,7 @@ use Carbon\Carbon;
 class Index extends Component
 {
     use WithPagination;
-
+    public $message;
     public $search;
     public $check_in;
     public $status;
@@ -119,7 +119,25 @@ class Index extends Component
         $room->save();
         $this->emitSelf('status:checkout');
     }
+    public function cancel($code)
+    {
+        $this->selected_reservation = $code;
+    }
 
+    public function canceled()
+    {
+        $this->validate(['message' => ['required']]);
+
+        $reservation = Reservation::firstWhere('code', $this->selected_reservation);
+        $room = Room::firstWhere('code', $reservation->room->code);
+        
+        $reservation->update(['status' => 'canceled', 'message' => $this->message]);
+
+        $available = $room->total_rooms - array_sum($room->reservations->where('status', '<>', 'canceled')->where('status', '<>', 'check out')->pluck('total_rooms')->toArray());
+        $room->update(['available' => $available]);
+
+        $this->emitSelf('reservation:canceled');
+    }
     public function statusConfirmed()
     {
         $this->dispatchBrowserEvent('status:confirmed');
